@@ -3,6 +3,7 @@ export const SORT_POSTS = 'SORT_POSTS';
 export const REQUEST_POST = 'REQUEST_POST';
 export const RECEIVE_POST = 'RECEIVE_POST';
 export const UPDATE_POST = 'UPDATE_POST';
+export const DELETE_POST = 'DELETE_POST';
 
 function receivePosts(category, json) {
   return {
@@ -19,7 +20,7 @@ export function fetchPosts(category = null) {
       response => response.json(),
       error => console.error(error)
     )
-    .then(json => dispatch(receivePosts(category, json)))
+    .then(json => dispatch(receivePosts(category, json)));
   }
 }
 
@@ -47,7 +48,7 @@ export function fetchPost(id) {
       response => response.json(),
       error => console.error(error)
     )
-    .then(json => dispatch(receivePost(json)))
+    .then(json => dispatch(receivePost(json)));
   }
 }
 
@@ -82,7 +83,7 @@ export function sendPostVote({ id, vote }) {
       response => response.json(),
       error => console.error(error)
     )
-    .then(json => dispatch(updatePost(json)))
+    .then(json => dispatch(updatePost(json)));
   }
 }
 
@@ -100,8 +101,29 @@ export function sendPost({ post, method }) {
       response => response.json(),
       error => console.error(error)
     )
-    .then(json => {
-      return dispatch(updatePost(json));
+    .then(json => dispatch(updatePost(json)));
+  }
+}
+
+function deletePost(id) {
+  return {
+    type: DELETE_POST,
+    id
+  }
+}
+
+export function sendDeletePost(id) {
+  return function (dispatch) {
+    return fetch('http://localhost:5001/posts/' + id,
+    {
+      headers: {
+        'Authorization': 'hello'
+      },
+      method: 'DELETE'
     })
+    .then(
+      response => dispatch(deletePost(id)),
+      error => console.error(error)
+    );
   }
 }

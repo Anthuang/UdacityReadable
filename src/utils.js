@@ -19,3 +19,7 @@ export function sortBy(arr, by) {
   }
   return arr;
 }
+
+export function dateFromPost(post) {
+  return post ? new Date(post.timestamp).toString() : '';
+}

@@ -3,10 +3,14 @@ import {
   REQUEST_POST,
   RECEIVE_POST,
   SORT_POSTS,
-  UPDATE_POST
+  UPDATE_POST,
+  DELETE_POST
 } from '../actions';
 
-function posts(state = { sortBy: 'voteScore' }, action) {
+function posts(state = { 
+  sortBy: 'voteScore',
+  data: {}
+}, action) {
   switch (action.type) {
     case RECEIVE_POSTS:
       return {
@@ -14,8 +18,8 @@ function posts(state = { sortBy: 'voteScore' }, action) {
         category: action.category,
         data: action.posts.reduce(
           (obj, item) => {
-            obj[item['id']] = item
-            return obj
+            if (!item['deleted']) obj[item['id']] = item;
+            return obj;
           }, {})
       }
     case REQUEST_POST:
@@ -24,10 +28,16 @@ function posts(state = { sortBy: 'voteScore' }, action) {
         status: action.status
       }
     case RECEIVE_POST:
-      return {
+      return action.post.error ? {
+        ...state,
+        status: action.status
+      } : {
         ...state,
         status: action.status,
-        activePost: action.post
+        data: {
+          ...state.data,
+          [action.post.id]: action.post
+        }
       }
     case SORT_POSTS:
       return {
@@ -40,9 +50,12 @@ function posts(state = { sortBy: 'voteScore' }, action) {
         data: {
           ...state.data,
           [action.post.id]: action.post
-        },
-        activePost: action.post
+        }
       }
+    case DELETE_POST:
+      let newState = { ...state };
+      delete newState.data[action.id];
+      return newState;
     default:
       return state;
   }
@@ -52,4 +65,4 @@ export function selectPostsAsArray(state) {
   return state.posts.data ? Object.values(state.posts.data) : [];
 }
 
-export default posts
+export default posts;

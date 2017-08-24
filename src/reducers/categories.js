@@ -2,7 +2,9 @@ import {
   RECEIVE_CATEGORIES
 } from '../actions';
 
-function categories(state = {}, action) {
+function categories(state = {
+  data: []
+}, action) {
   switch (action.type) {
     case RECEIVE_CATEGORIES:
       return {
@@ -14,4 +16,4 @@ function categories(state = {}, action) {
   }
 }
 
-export default categories
+export default categories;

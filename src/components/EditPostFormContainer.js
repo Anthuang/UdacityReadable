@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { fetchCategories, fetchPost, sendPost } from '../actions';
 import PostForm from './PostForm';
 
@@ -11,20 +12,21 @@ class PostFormContainer extends Component {
     
     categories || fetchCategories();
 
-    this.postID && fetchPost(this.props.match.params.postID);
+    fetchPost(this.props.match.params.postID);
   }
 
   submit(values) {
-    const timestamp = Date.now();
+    const { post } = this.props;
+
     const ret = {
       ...values,
-      id: this.postID ? this.postID : Date.now(),
-      timestamp
+      id: post.id,
+      timestamp: post.timestamp
     }
 
-    this.props.sendPost({ post: ret, method: this.postID ? 'PUT' : 'POST'});
+    this.props.sendPost({ post: ret, method: 'PUT' });
 
-    this.props.history.push('/');
+    this.props.history.push('/posts/' + this.postID);
   }
   
   render() {
@@ -32,15 +34,17 @@ class PostFormContainer extends Component {
 
     return (
       <div>
-        {status === 'Done' ? <PostForm onSubmit={ this.submit.bind(this) } categories={ categories } />
+        {status === 'Done' ? <PostForm onSubmit={data => this.submit(data)} categories={categories} postID={this.postID} />
         : <h2>Loading...</h2> }
+        <Link to={'/posts/' + this.postID}><button>Back</button></Link>
       </div>
     )
   }
 }
 
-function mapStateToProps({ categories, posts }) {
+function mapStateToProps({ categories, posts }, ownProps) {
   return {
+    post: posts.data[ownProps.match.params.postID],
     categories: categories.data,
     status: posts.status
   }

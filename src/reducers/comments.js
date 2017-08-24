@@ -1,18 +1,37 @@
 import {
   RECEIVE_COMMENTS,
-  UPDATE_COMMENT
+  REQUEST_COMMENT,
+  RECEIVE_COMMENT,
+  UPDATE_COMMENT,
+  DELETE_COMMENT
 } from '../actions';
 
-function comments(state = {}, action) {
+function comments(state = {
+  data: {}
+}, action) {
   switch (action.type) {
     case RECEIVE_COMMENTS:
       return {
         ...state,
         data: action.comments.reduce(
           (obj, item) => {
-            obj[item['id']] = item
-            return obj
+            if (!item['deleted']) obj[item['id']] = item;
+            return obj;
           }, {})
+      }
+    case REQUEST_COMMENT:
+      return {
+        ...state,
+        status: action.status
+      }
+    case RECEIVE_COMMENT:
+      return {
+        ...state,
+        status: action.status,
+        data: {
+          ...state.data,
+          [action.comment.id]: action.comment
+        }
       }
     case UPDATE_COMMENT:
       return {
@@ -22,6 +41,10 @@ function comments(state = {}, action) {
           [action.comment.id]: action.comment
         }
       }
+    case DELETE_COMMENT:
+      let newState = { ...state };
+      delete newState.data[action.id];
+      return newState;
     default:
       return state;
   }
@@ -31,4 +54,4 @@ export function selectCommentsAsArray(state) {
   return state.comments.data ? Object.values(state.comments.data) : [];
 }
 
-export default comments
+export default comments;

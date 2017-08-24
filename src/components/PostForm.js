@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
-import { Link } from 'react-router-dom';
 
 class PostForm extends Component {
   render() {
@@ -10,7 +9,7 @@ class PostForm extends Component {
     
     return (
       <div>
-        <form onSubmit={ handleSubmit }>
+        <form onSubmit={handleSubmit}>
           <div>
             <label htmlFor="title">Title</label>
             <Field name="title" component="input" type="text" />
@@ -26,14 +25,14 @@ class PostForm extends Component {
           <div>
             <label htmlFor="category">Category</label>
             <Field name="category" component="select" type="text">
+              <option key="" value="" disabled>Pick a category...</option>
               {categories && categories.map(c => (
-                <option key={ c.name } value={ c.name }>{ c.name }</option>
+                <option key={c.name} value={c.name}>{c.name}</option>
               ))}
             </Field>
           </div>
           <button type="submit">Submit</button>
         </form>
-        <Link to='/'><button>Back</button></Link>
       </div>
     )
   }
@@ -41,14 +40,14 @@ class PostForm extends Component {
 
 PostForm = reduxForm({
   form: 'post'
-})(PostForm)
+})(PostForm);
 
 PostForm = connect(
-  state => {
+  (state, ownProps) => {
     return {
-      initialValues: state.posts.activePost
+      initialValues: state.posts.data[ownProps.postID]
     }
   }
-)(PostForm)
+)(PostForm);
 
-export default PostForm
+export default PostForm;

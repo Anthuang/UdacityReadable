@@ -7,8 +7,11 @@ import { sortBy } from '../utils';
 
 class Root extends Component {
   componentDidMount() {
-    this.props.fetchCategories();
-    this.props.fetchPosts();
+    const { fetchCategories, fetchPosts, sortPosts } = this.props;
+
+    fetchCategories();
+    fetchPosts();
+    sortPosts('voteScore');
   }
   
   render() {
@@ -54,7 +57,7 @@ function mapStateToProps(state) {
   const { categories, posts } = state;
 
   return {
-    categories: categories.data || [],
+    categories: categories.data,
     category: posts.category,
     posts: sortBy(selectPostsAsArray(state), posts.sortBy)
   }
@@ -72,4 +75,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Root)
+)(Root);
